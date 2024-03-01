@@ -6,7 +6,9 @@ from rest_framework.routers import DefaultRouter
 
 router=DefaultRouter()
 router.register("student",views.StudentView,basename="student_list"),
-router.register("company",views.CompanycreateView,basename="company_list"),
+router.register("company",views.CompanyView,basename="company_list"),
+router.register("material",views.MaterialsView,basename="materials"),
+router.register("application",views.ApplicationView,basename="application"),
 
 
 

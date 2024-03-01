@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from Tpoapi.models import Student,Company
+from Tpoapi.models import Student,Company,StudentProfile,Job,Application,Materials,InterviewSchedule
 
 class StudentSerializer(serializers.ModelSerializer):
     id=serializers.CharField(read_only=True)
@@ -14,11 +14,8 @@ class StudentSerializer(serializers.ModelSerializer):
         return Student.objects.create_user(**validated_data)   
     
 class ProfileSerializer(serializers.ModelSerializer):
-    id=serializers.CharField(read_only=True)
-    password=serializers.CharField(write_only=True)
-
     class Meta:
-        model=Student    
+        model=StudentProfile    
         fields="__all__"
 
 
@@ -28,4 +25,27 @@ class  CompanySerializer(serializers.ModelSerializer):
 
     class Meta:
         model=Company
-        fields=["id","name","description","industry","email_address","phone_no","Headquarters","founded","logo","website","username","password"]           
+        fields=["id","name","description","industry","email_address","phone_no","Headquarters","founded","logo","website","username","password"]   
+        
+        
+class JobSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Job
+        fields="__all__"  
+        
+
+class ApplicationSerializer(serializers.ModelSerializer):
+    student=serializers.CharField(read_only=True)
+    class Meta:
+        model=Application
+        fields="__all__"  
+        
+class MaterialSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Materials    
+        fields="__all__"  
+        
+class InterviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=InterviewSchedule    
+        fields="__all__"     

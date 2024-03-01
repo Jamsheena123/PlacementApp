@@ -4,7 +4,11 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.routers import DefaultRouter
 
 router=DefaultRouter()
-
+router.register("companies",views.CompanyView,basename="company_list"),
+router.register("jobs",views.jobView,basename="job_list"),
+router.register("applicationstatus",views.ApplicationStatusView,basename="applicationstatus"),
+router.register("interviews",views.InterviewView,basename="interview_list"),
+router.register("materials",views.MaterialView,basename="materials_list"),
 
 
 

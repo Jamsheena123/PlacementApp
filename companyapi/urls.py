@@ -4,6 +4,8 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.routers import DefaultRouter
 
 router=DefaultRouter()
+router.register("job",views.JobView,basename="manage_job"),
+router.register("applications",views.ApplicationView,basename="applications"),
 
 
 

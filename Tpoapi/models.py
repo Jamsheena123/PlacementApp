@@ -74,6 +74,7 @@ class StudentProfile(models.Model):
     languages = models.TextField(blank=True, null=True)
     address = models.TextField(null=True)
     resume=models.FileField(upload_to="images",null=True)
+    is_placed=models.BooleanField(default=False)
 
 
 
@@ -85,10 +86,9 @@ post_save.connect(create_profile,sender=Student)
 
 
 
-
-
 class Application(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    job=models.ForeignKey(Job,on_delete=models.CASCADE,null=True)
     applied_date = models.DateTimeField(auto_now_add=True)
     status_choices = [
         ('PENDING', 'Pending'),
@@ -98,9 +98,8 @@ class Application(models.Model):
     status = models.CharField(max_length=10, choices=status_choices, default='PENDING')
 
 class InterviewSchedule(models.Model):
-    tpo = models.ForeignKey('TPO', on_delete=models.CASCADE)
-    company = models.ForeignKey('Company', on_delete=models.CASCADE)
-    student = models.ForeignKey('Student', on_delete=models.CASCADE)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    application=models.OneToOneField(Application, on_delete=models.CASCADE,null=True)
     date_time = models.DateTimeField()
     location = models.CharField(max_length=100)
 
