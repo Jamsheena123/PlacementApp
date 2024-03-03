@@ -78,27 +78,27 @@ class ApplicationView(ViewSet):
         return Response(data=serializer.data)
     
 
-    @action(methods=["post"],detail=True)
-    def accept_application(self, request, *args, **kwargs):
-        apply_id = kwargs.get("pk")
-        try:
-            apply_obj = Application.objects.get(id=apply_id)
-        except Application.DoesNotExist:
-            return Response({"message": "Application not found"}, status=status.HTTP_404_NOT_FOUND)
-        apply_obj.status = "APPROVED"
-        apply_obj.save()
-        return Response({"message": "Application accepted successfully"}, status=status.HTTP_200_OK)
+    # @action(methods=["post"],detail=True)
+    # def accept_application(self, request, *args, **kwargs):
+    #     apply_id = kwargs.get("pk")
+    #     try:
+    #         apply_obj = Application.objects.get(id=apply_id)
+    #     except Application.DoesNotExist:
+    #         return Response({"message": "Application not found"}, status=status.HTTP_404_NOT_FOUND)
+    #     apply_obj.status = "APPROVED"
+    #     apply_obj.save()
+    #     return Response({"message": "Application accepted successfully"}, status=status.HTTP_200_OK)
     
-    @action(methods=["post"],detail=True)
-    def reject_application(self, request, *args, **kwargs):
-        apply_id = kwargs.get("pk")
-        try:
-            apply_obj = Application.objects.get(id=apply_id)
-        except Application.DoesNotExist:
-            return Response({"message": "Application not found"}, status=status.HTTP_404_NOT_FOUND)
-        apply_obj.status = "REJECTED"
-        apply_obj.save()
-        return Response({"message": "Application rejected successfully"}, status=status.HTTP_200_OK)
+    # @action(methods=["post"],detail=True)
+    # def reject_application(self, request, *args, **kwargs):
+    #     apply_id = kwargs.get("pk")
+    #     try:
+    #         apply_obj = Application.objects.get(id=apply_id)
+    #     except Application.DoesNotExist:
+    #         return Response({"message": "Application not found"}, status=status.HTTP_404_NOT_FOUND)
+    #     apply_obj.status = "REJECTED"
+    #     apply_obj.save()
+    #     return Response({"message": "Application rejected successfully"}, status=status.HTTP_200_OK)
     
     @action(methods=["post"],detail=True)
     def schedule_interview(self,request,*args,**kwargs):
@@ -115,3 +115,21 @@ class ApplicationView(ViewSet):
                 return Response(data=serializer.data)
             else:
                 return Response(data=serializer.errors)
+            
+            
+class InterviewSheduleView(ViewSet):
+    authentication_classes=[authentication.TokenAuthentication]
+    permission_classes=[permissions.IsAuthenticated]
+        
+    def list(self,request,*args,**kwargs):
+        cmp_id=request.user.id
+        cmp_obj=Company.objects.get(id=cmp_id)
+        qs=InterviewSchedule.objects.filter(company=cmp_obj)
+        serializer=InterviewSheduleSerializer(qs,many=True)
+        return Response(data=serializer.data)
+    
+    def retrieve(self,request,*args,**kwargs):
+        id=kwargs.get("pk")
+        qs=InterviewSchedule.objects.get(id=id)
+        serializer=InterviewSheduleSerializer(qs)
+        return Response(data=serializer.data)

@@ -8,8 +8,8 @@ from rest_framework.decorators import action
 from rest_framework import status
 
 
-from Tpoapi.serializer import TpoSerializer,StudentSerializer,CompanySerializer,MaterialSerializer,JobSerializer,ApplicationSerializer
-from Tpoapi.models import Student,Company,TPO,Materials,Job,Application
+from Tpoapi.serializer import TpoSerializer,StudentSerializer,CompanySerializer,MaterialSerializer,JobSerializer,ApplicationSerializer,InterviewSheduleSerializer
+from Tpoapi.models import Student,Company,TPO,Materials,Job,Application,InterviewSchedule
 
 
 
@@ -125,3 +125,41 @@ class ApplicationView(ViewSet):
         qs=Application.objects.get(id=id)
         serializer=ApplicationSerializer(qs)
         return Response(data=serializer.data)
+    
+    @action(methods=["post"],detail=True)
+    def accept_application(self, request, *args, **kwargs):
+        apply_id = kwargs.get("pk")
+        try:
+            apply_obj = Application.objects.get(id=apply_id)
+        except Application.DoesNotExist:
+            return Response({"message": "Application not found"}, status=status.HTTP_404_NOT_FOUND)
+        apply_obj.status = "APPROVED"
+        apply_obj.save()
+        return Response({"message": "Application accepted successfully"}, status=status.HTTP_200_OK)
+    
+    @action(methods=["post"],detail=True)
+    def reject_application(self, request, *args, **kwargs):
+        apply_id = kwargs.get("pk")
+        try:
+            apply_obj = Application.objects.get(id=apply_id)
+        except Application.DoesNotExist:
+            return Response({"message": "Application not found"}, status=status.HTTP_404_NOT_FOUND)
+        apply_obj.status = "REJECTED"
+        apply_obj.save()
+        return Response({"message": "Application rejected successfully"}, status=status.HTTP_200_OK)
+
+
+class InterviewSheduleView(ViewSet):
+    authentication_classes=[authentication.TokenAuthentication]
+    permission_classes=[permissions.IsAuthenticated]
+        
+    def list(self,request,*args,**kwargs):
+        qs=InterviewSchedule.objects.all()
+        serializer=InterviewSheduleSerializer(qs,many=True)
+        return Response(data=serializer.data)
+    
+    def retrieve(self,request,*args,**kwargs):
+        id=kwargs.get("pk")
+        qs=InterviewSchedule.objects.get(id=id)
+        serializer=InterviewSheduleSerializer(qs)
+        return Response(data=serializer.data)   
