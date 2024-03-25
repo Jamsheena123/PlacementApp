@@ -96,6 +96,9 @@ class Application(models.Model):
         ('REJECTED', 'Rejected'),
     ]
     status = models.CharField(max_length=10, choices=status_choices, default='PENDING')
+    
+    def __str__(self):
+        return self.job.position
 
 class InterviewSchedule(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE)

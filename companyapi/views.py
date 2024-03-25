@@ -10,6 +10,10 @@ from rest_framework import status
 from companyapi.serializer import CompanySerializer,JobSerializer,ApplicationSerializer,InterviewSheduleSerializer
 from Tpoapi.models import Student,Company,TPO,Materials,Job,Application,InterviewSchedule
 
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
+
+
 
 
 class CompanyCreationView(APIView):
@@ -17,9 +21,21 @@ class CompanyCreationView(APIView):
         serializer=CompanySerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(user_type="Company")
-            return Response(data=serializer.data)
+            return Response(data={'status':1,'data':serializer.data})
         else:
-            return Response(data=serializer.errors)
+            error_messages = ' '.join([error for errors in serializer.errors.values() for error in errors])
+            return Response(data={'status':0,'msg': error_messages}, status=status.HTTP_400_BAD_REQUEST)        
+        
+        
+class CustomAuthToken(ObtainAuthToken):
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data,context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        user_type = user.user_type
+        
+        return Response(data={'status':1,'data':{'token': token.key,'user_type': user_type,}})
         
 
 class JobView(ViewSet):
@@ -32,9 +48,10 @@ class JobView(ViewSet):
         cmp_obj=Company.objects.get(id=cmp_id)
         if serializer.is_valid():
             serializer.save(posted_by=cmp_obj)
-            return Response(data=serializer.data)
+            return Response(data={'status':1,'data':serializer.data})
         else:
-            return Response(data=serializer.errors)  
+            error_messages = ' '.join([error for errors in serializer.errors.values() for error in errors])
+            return Response(data={'status':0,'msg': error_messages}, status=status.HTTP_400_BAD_REQUEST)        
   
             
     def list(self,request,*args,**kwargs):
@@ -42,22 +59,22 @@ class JobView(ViewSet):
         cmp_obj=Company.objects.get(id=cmp_id)
         qs=Job.objects.filter(posted_by=cmp_obj)
         serializer=JobSerializer(qs,many=True)
-        return Response(data=serializer.data)
+        return Response(data={'status':1,'data':serializer.data})
     
     def retrieve(self,request,*args,**kwargs):
         id=kwargs.get("pk")
         qs=Job.objects.get(id=id)
         serializer=JobSerializer(qs)
-        return Response(data=serializer.data)
+        return Response(data={'status':1,'data':serializer.data})
     
     def destroy(self, request, *args, **kwargs):
         id = kwargs.get("pk")
         try:
             instance = Job.objects.get(id=id)
             instance.delete()
-            return Response({"msg": "Job removed"})
+            return Response(data={'status':1,'data':'Job removed'})
         except Materials.DoesNotExist:
-            return Response({"msg": "Job not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(data={'status':0,'msg':'Job not found'}, status=status.HTTP_400_BAD_REQUEST)
         
         
 class ApplicationView(ViewSet):
@@ -69,13 +86,13 @@ class ApplicationView(ViewSet):
         cmp_obj=Company.objects.get(id=cmp_id)
         qs=Application.objects.filter(job__posted_by=cmp_obj)
         serializer=ApplicationSerializer(qs,many=True)
-        return Response(data=serializer.data)
+        return Response(data={'status':1,'data':serializer.data})
     
     def retrieve(self,request,*args,**kwargs):
         id=kwargs.get("pk")
         qs=Application.objects.get(id=id)
         serializer=ApplicationSerializer(qs)
-        return Response(data=serializer.data)
+        return Response(data={'status':1,'data':serializer.data})
     
 
     # @action(methods=["post"],detail=True)
@@ -108,13 +125,14 @@ class ApplicationView(ViewSet):
         appl_id=kwargs.get("pk")
         appl_obj=Application.objects.get(id=appl_id)
         if appl_obj.status!="APPROVED":
-            return Response(request,"application is not approved.. approve it first!")
+            return Response(request,data={'status':0,'msg':'application is not approved.. approve it first!'}, status=status.HTTP_400_BAD_REQUEST)
         else:
             if serializer.is_valid():
                 serializer.save(company=company_obj,application=appl_obj)
-                return Response(data=serializer.data)
+                return Response(data={'status':1,'data':serializer.data})
             else:
-                return Response(data=serializer.errors)
+                error_messages = ' '.join([error for errors in serializer.errors.values() for error in errors])
+                return Response(data={'status':0,'msg': error_messages}, status=status.HTTP_400_BAD_REQUEST)        
             
             
 class InterviewSheduleView(ViewSet):
@@ -126,10 +144,10 @@ class InterviewSheduleView(ViewSet):
         cmp_obj=Company.objects.get(id=cmp_id)
         qs=InterviewSchedule.objects.filter(company=cmp_obj)
         serializer=InterviewSheduleSerializer(qs,many=True)
-        return Response(data=serializer.data)
+        return Response(data={'status':1,'data':serializer.data})
     
     def retrieve(self,request,*args,**kwargs):
         id=kwargs.get("pk")
         qs=InterviewSchedule.objects.get(id=id)
         serializer=InterviewSheduleSerializer(qs)
-        return Response(data=serializer.data)
+        return Response(data={'status':1,'data':serializer.data})

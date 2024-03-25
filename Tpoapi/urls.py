@@ -15,7 +15,7 @@ router.register("scheduledinterview",views.InterviewSheduleView,basename="schedu
 
 urlpatterns=[
     path("register/",views.TpoCreationView.as_view(),name="signin"),
-    path("token/",ObtainAuthToken.as_view(),name="token"),
+    path('token/',views.CustomAuthToken.as_view(), name='token'),
 
 
 ] +router.urls

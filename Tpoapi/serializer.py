@@ -50,6 +50,8 @@ class JobSerializer(serializers.ModelSerializer):
         
         
 class ApplicationSerializer(serializers.ModelSerializer):
+    student=StudentSerializer()
+    job=JobSerializer()
     class Meta:
         model=Application
         fields="__all__"
@@ -57,6 +59,8 @@ class ApplicationSerializer(serializers.ModelSerializer):
 
 
 class InterviewSheduleSerializer(serializers.ModelSerializer):
+    company=CompanySerializer()
+    application=ApplicationSerializer()
     class Meta:
         model=InterviewSchedule
         fields="__all__" 

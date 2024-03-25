@@ -14,7 +14,7 @@ router.register("materials",views.MaterialView,basename="materials_list"),
 
 urlpatterns=[
     path("signup/",views.StudentCreationView.as_view(),name="signup"),
-    path("token/",ObtainAuthToken.as_view(),name="token"),
+    path('token/',views.CustomAuthToken.as_view(), name='token'),
     path("profile/",views.StudentProfileView.as_view(),name="student_profile"),
 
 

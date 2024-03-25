@@ -12,7 +12,7 @@ router.register("scheduledinterview",views.InterviewSheduleView,basename="schedu
 
 urlpatterns=[
     path("signup/",views.CompanyCreationView.as_view(),name="signup"),
-    path("token/",ObtainAuthToken.as_view(),name="token"),
+    path('token/',views.CustomAuthToken.as_view(), name='token'),
 
 
 ] +router.urls
