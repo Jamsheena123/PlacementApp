@@ -115,7 +115,7 @@ class jobView(ViewSet):
         job_obj=Job.objects.get(id=job_id)
         existing_applications = Application.objects.filter(job=job_obj, student=stud_obj)
         if existing_applications.exists():
-            return Response(request,data={'status':0,'msg':"you already applied for this post"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(data={'status':0,'msg':"you already applied for this post"}, status=status.HTTP_400_BAD_REQUEST)
         else:
             if serializer.is_valid():
                 serializer.save(job=job_obj,student=stud_obj)

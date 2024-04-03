@@ -62,6 +62,12 @@ class Materials(models.Model):
     description = models.CharField(max_length=300)
     video=models.FileField(upload_to="videos")
     posted_date=models.DateTimeField(auto_now_add=True)
+    
+    
+class Questions(models.Model):
+    no=models.PositiveIntegerField()
+    topic= models.CharField(max_length=100)
+    answer=models.CharField(max_length=100)
 
 
 class StudentProfile(models.Model):

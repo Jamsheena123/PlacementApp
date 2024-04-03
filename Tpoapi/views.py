@@ -6,10 +6,11 @@ from rest_framework import authentication
 from rest_framework.viewsets import ViewSet
 from rest_framework.decorators import action
 from rest_framework import status
+from django.views.decorators.csrf import csrf_exempt
 
 
-from Tpoapi.serializer import TpoSerializer,StudentSerializer,CompanySerializer,MaterialSerializer,JobSerializer,ApplicationSerializer,InterviewSheduleSerializer
-from Tpoapi.models import Student,Company,TPO,Materials,Job,Application,InterviewSchedule
+from Tpoapi.serializer import TpoSerializer,StudentSerializer,CompanySerializer,MaterialSerializer,JobSerializer,ApplicationSerializer,InterviewSheduleSerializer,QuestionsSerializer
+from Tpoapi.models import Student,Company,TPO,Materials,Job,Application,InterviewSchedule,Questions
 
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
@@ -102,7 +103,7 @@ class MaterialsView(ViewSet):
                 error_messages = ' '.join([error for errors in serializer.errors.values() for error in errors])
                 return Response(data={'status':0,'msg': error_messages}, status=status.HTTP_400_BAD_REQUEST)        
         else:
-            return Response(request,data={'status':0,'msg':"Permission Denied for current user"})
+            return Response(request,data={'status':0,'msg':"Permission Denied for current user"}, status=status.HTTP_400_BAD_REQUEST)
    
         
         
@@ -168,6 +169,7 @@ class ApplicationView(ViewSet):
         return Response(data={'status':1,"msg": "Application rejected successfully"}, status=status.HTTP_200_OK)
 
 
+
 class InterviewSheduleView(ViewSet):
     authentication_classes=[authentication.TokenAuthentication]
     permission_classes=[permissions.IsAuthenticated]
@@ -181,4 +183,31 @@ class InterviewSheduleView(ViewSet):
         id=kwargs.get("pk")
         qs=InterviewSchedule.objects.get(id=id)
         serializer=InterviewSheduleSerializer(qs)
+        return Response(data={'status':1,'data':serializer.data})
+
+
+
+class QuizView(ViewSet):
+    authentication_classes=[authentication.TokenAuthentication]
+    permission_classes=[permissions.IsAuthenticated]
+    
+    def create(self,request,*args,**kwargs):
+        serializer=QuestionsSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(data={'status':1,'data':serializer.data})
+        else:
+            error_messages = ' '.join([error for errors in serializer.errors.values() for error in errors])
+            return Response(data={'status':0,'msg': error_messages}, status=status.HTTP_400_BAD_REQUEST)        
+  
+            
+    def list(self,request,*args,**kwargs):
+        qs=Questions.objects.all()
+        serializer=QuestionsSerializer(qs,many=True)
+        return Response(data={'status':1,'data':serializer.data})
+    
+    def retrieve(self,request,*args,**kwargs):
+        id=kwargs.get("pk")
+        qs=Questions.objects.get(id=id)
+        serializer=QuestionsSerializer(qs)
         return Response(data={'status':1,'data':serializer.data})

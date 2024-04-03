@@ -125,7 +125,7 @@ class ApplicationView(ViewSet):
         appl_id=kwargs.get("pk")
         appl_obj=Application.objects.get(id=appl_id)
         if appl_obj.status!="APPROVED":
-            return Response(request,data={'status':0,'msg':'application is not approved.. approve it first!'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(data={'status':0,'msg':'application is not approved'}, status=status.HTTP_400_BAD_REQUEST)
         else:
             if serializer.is_valid():
                 serializer.save(company=company_obj,application=appl_obj)
