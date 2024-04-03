@@ -8,8 +8,8 @@ from rest_framework.decorators import action
 from rest_framework import status
 
 
-from Tpoapi.models import Student,Company,StudentProfile,Job,Application,Materials,InterviewSchedule
-from studentapi.serializer import StudentSerializer,ProfileSerializer,CompanySerializer,JobSerializer,ApplicationSerializer,MaterialSerializer,InterviewSerializer
+from Tpoapi.models import Student,Company,StudentProfile,Job,Application,Materials,InterviewSchedule,Questions
+from studentapi.serializer import StudentSerializer,ProfileSerializer,CompanySerializer,JobSerializer,ApplicationSerializer,MaterialSerializer,InterviewSerializer,QuestionsSerializer
 
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
@@ -177,3 +177,17 @@ class MaterialView(ViewSet):
         return Response(data={'status':1,'data':serializer.data})
     
 
+class QuizView(ViewSet):
+    authentication_classes=[authentication.TokenAuthentication]
+    permission_classes=[permissions.IsAuthenticated]
+        
+    def list(self,request,*args,**kwargs):
+        qs=Questions.objects.all()
+        serializer=QuestionsSerializer(qs,many=True)
+        return Response(data={'status':1,'data':serializer.data})
+    
+    def retrieve(self,request,*args,**kwargs):
+        id=kwargs.get("pk")
+        qs=Questions.objects.get(id=id)
+        serializer=QuestionsSerializer(qs)
+        return Response(data={'status':1,'data':serializer.data})

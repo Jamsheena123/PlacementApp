@@ -9,7 +9,7 @@ router.register("jobs",views.jobView,basename="job_list"),
 router.register("applicationstatus",views.ApplicationStatusView,basename="applicationstatus"),
 router.register("interviews",views.InterviewView,basename="interview_list"),
 router.register("materials",views.MaterialView,basename="materials_list"),
-
+router.register("quiz",views.QuizView,basename="quiz"),
 
 
 urlpatterns=[

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from Tpoapi.models import Student,Company,StudentProfile,Job,Application,Materials,InterviewSchedule
+from Tpoapi.models import Student,Company,StudentProfile,Job,Application,Materials,InterviewSchedule,Questions
 
 class StudentSerializer(serializers.ModelSerializer):
     id=serializers.CharField(read_only=True)
@@ -48,4 +48,10 @@ class MaterialSerializer(serializers.ModelSerializer):
 class InterviewSerializer(serializers.ModelSerializer):
     class Meta:
         model=InterviewSchedule    
-        fields="__all__"     
+        fields="__all__"  
+        
+        
+class QuestionsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Questions
+        fields="__all__"    
