@@ -211,3 +211,14 @@ class QuizView(ViewSet):
         qs=Questions.objects.get(id=id)
         serializer=QuestionsSerializer(qs)
         return Response(data={'status':1,'data':serializer.data})
+    
+    
+    def destroy(self, request, *args, **kwargs):
+        id = kwargs.get("pk")
+        try:
+            instance = Questions.objects.get(id=id)
+            instance.delete()
+            return Response(data={'status':1,'msg':"question removed"})
+
+        except Materials.DoesNotExist:
+            return Response(data={'status':0,"msg": "question not found"}, status=status.HTTP_404_NOT_FOUND)

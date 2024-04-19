@@ -29,6 +29,7 @@ class  CompanySerializer(serializers.ModelSerializer):
         
         
 class JobSerializer(serializers.ModelSerializer):
+    posted_by=serializers.CharField(read_only=True)
     class Meta:
         model=Job
         fields="__all__"  
@@ -46,6 +47,7 @@ class MaterialSerializer(serializers.ModelSerializer):
         fields="__all__"  
         
 class InterviewSerializer(serializers.ModelSerializer):
+    company=serializers.CharField(read_only=True)
     class Meta:
         model=InterviewSchedule    
         fields="__all__"  
